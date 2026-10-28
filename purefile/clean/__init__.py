@@ -9,6 +9,7 @@ from purefile.clean.base import Changes, CleanError
 from purefile.clean.heif import strip_heif
 from purefile.clean.jpeg import strip_jpeg
 from purefile.clean.png import strip_png
+from purefile.clean.video import strip_video
 from purefile.clean.webp import strip_webp
 from purefile.formats import Format
 
@@ -29,4 +30,6 @@ def clean_file(src: Path, dst: Path, fmt: Format) -> Changes:
         return changes
     if fmt is Format.HEIF:
         return strip_heif(src, dst)
+    if fmt.is_video:
+        return strip_video(src, dst, fmt)
     raise CleanError(f"no cleaner for {fmt}")

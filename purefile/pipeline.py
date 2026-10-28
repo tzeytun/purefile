@@ -40,7 +40,11 @@ def _kept(tags: dict[str, Any]) -> list[str]:
     kept: list[str] = []
     if any(ICC_GROUP.match(key.partition(":")[0]) for key in tags):
         kept.append(KEPT_ICC)
-    if "IFD0:Orientation" in tags or any(key.endswith(":Rotation") for key in tags):
+    rotated = any(
+        key.endswith(":Rotation") and str(value) not in ("0", "Horizontal (normal)")
+        for key, value in tags.items()
+    )
+    if "IFD0:Orientation" in tags or rotated:
         kept.append(KEPT_ORIENTATION)
     return kept
 

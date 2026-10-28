@@ -8,7 +8,7 @@ c2patool's built-in *test* certificate (no network access, no real identity).
 Usage:
     python scripts/make_fixtures.py [OUTPUT_DIR]      # default: build/fixtures
 
-Requires exiftool and c2patool on PATH (or PUREFILE_*_PATH variables, see
+Requires exiftool, c2patool and ffmpeg on PATH (or PUREFILE_*_PATH variables, see
 .env.example), plus the dev dependencies (``pip install -e ".[dev]"``).
 """
 
@@ -220,13 +220,86 @@ def make_heic(out: Path) -> Path:
     return path
 
 
+# --- Videos -------------------------------------------------------------------
+
+
+def encode_test_video(path: Path, seconds: int, size: str) -> None:
+    """A short H.264/AAC clip of ffmpeg's built-in test pattern and a sine tone."""
+    run([
+        tool("ffmpeg"), "-loglevel", "error", "-y",
+        "-f", "lavfi", "-i", f"testsrc2=size={size}:rate=30",
+        "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000",
+        "-t", str(seconds), "-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p",
+        "-c:a", "aac", "-shortest", path,
+    ])  # fmt: skip
+
+
+def make_mp4(out: Path) -> Path:
+    """Vertical clip: rotation 90, title/location/date, chapters, cover art, Keys, XMP, C2PA."""
+    path = out / "clip.mp4"
+    with tempfile.TemporaryDirectory() as tmp:
+        raw, cover, chapters = Path(tmp) / "raw.mp4", Path(tmp) / "cover.png", Path(tmp) / "ch.txt"
+        encode_test_video(raw, 3, "640x360")
+        draw_scene(320, 180, ((255, 196, 140), (64, 92, 160), (255, 236, 180))).save(cover)
+        chapters.write_text(
+            ";FFMETADATA1\n[CHAPTER]\nTIMEBASE=1/1000\nSTART=0\nEND=1500\ntitle=Secret chapter\n"
+        )
+        run([
+            tool("ffmpeg"), "-loglevel", "error", "-y",
+            "-display_rotation", "90", "-i", raw, "-i", cover, "-i", chapters,
+            "-map", "0", "-map", "1", "-map_chapters", "2", "-c", "copy",
+            "-disposition:v:1", "attached_pic",
+            "-metadata", "title=Secret holiday clip",
+            "-metadata", "comment=Recorded on a synthetic phone",
+            "-metadata", "location=+41.0082+028.9784/",
+            "-metadata", "creation_time=2024-05-17T14:32:09Z",
+            "-metadata:s:v:0", "handler_name=Core Media Video",
+            path,
+        ])  # fmt: skip
+    exiftool_write(
+        path,
+        "-Keys:Make=Purefile Optics",
+        "-Keys:Model=Synthetic Phone",
+        "-Keys:Software=Fixture OS 18.0",
+        f"-XMP-iptcExt:DigitalSourceType={AI_COMPOSITE}",
+        "-XMP-xmp:CreatorTool=Fixture Video Editor",
+    )
+    c2pa_sign(path, AI_COMPOSITE, "Fixture Video Editor")
+    return path
+
+
+def make_mov(out: Path) -> Path:
+    """QuickTime clip: rotation 270, timecode data track, Apple-style Keys with GPS, C2PA."""
+    path = out / "clip.mov"
+    with tempfile.TemporaryDirectory() as tmp:
+        raw = Path(tmp) / "raw.mp4"
+        encode_test_video(raw, 2, "480x270")
+        run([
+            tool("ffmpeg"), "-loglevel", "error", "-y", "-display_rotation", "270", "-i", raw,
+            "-map", "0", "-c", "copy", "-timecode", "01:00:00:00",
+            "-metadata", "creation_time=2025-02-03T04:05:06Z", "-f", "mov", path,
+        ])  # fmt: skip
+    exiftool_write(
+        path,
+        "-Keys:Make=Purefile Optics",
+        "-Keys:Model=Synthetic Camera",
+        "-Keys:GPSCoordinates=48.8584, 2.2945",
+        "-Keys:CreationDate=2025:02:03 04:05:06+01:00",
+        "-UserData:Software=Fixture Recorder 2",
+    )
+    c2pa_sign(path, CAMERA, "Purefile Fixture Camera")
+    return path
+
+
 IMAGE_BUILDERS = (make_jpeg, make_png, make_webp, make_heic)
+VIDEO_BUILDERS = (make_mp4, make_mov)
 
 
-def generate(out: Path = DEFAULT_OUT) -> dict[str, Path]:
+def generate(out: Path = DEFAULT_OUT, *, video: bool = True) -> dict[str, Path]:
     """Build every fixture into ``out`` and return them keyed by file name."""
     out.mkdir(parents=True, exist_ok=True)
-    built = [build(out) for build in IMAGE_BUILDERS]
+    builders = IMAGE_BUILDERS + (VIDEO_BUILDERS if video else ())
+    built = [build(out) for build in builders]
     return {path.name: path for path in built}
 
 

@@ -32,7 +32,14 @@ class Category(StrEnum):
 CATEGORY_ORDER = list(Category)
 
 # Groups that describe the file itself (or exiftool), not embedded metadata.
-STRUCTURAL_GROUPS = {"ExifTool", "System", "Composite", "JFIF", "Meta", "QuickTime"}
+STRUCTURAL_GROUPS = {"ExifTool", "System", "Composite", "JFIF", "Meta"}
+# QuickTime movie/track headers are structural, except for these fields.
+QUICKTIME_GROUP = re.compile(r"^(QuickTime|Track\d+)$")
+QUICKTIME_METADATA_TAGS = {
+    "CreateDate", "ModifyDate", "TrackCreateDate", "TrackModifyDate", "MediaCreateDate",
+    "MediaModifyDate", "CompressorName", "Encoder",
+}  # fmt: skip
+ZERO_DATE = "0000:00:00 00:00:00"
 # The ICC profile is kept on purpose: removing it would change displayed colors.
 ICC_GROUP = re.compile(r"^ICC(_Profile|-\w+)$")
 # Groups that only ever contain metadata.
@@ -75,12 +82,14 @@ AI_TAGS = {"DigitalSourceType", "ActionsDigitalSourceType", "AISystemUsed", "AIS
 DEVICE_TAGS = {"Make", "Model", "SerialNumber", "BodySerialNumber", "CameraSerialNumber",
                "InternalSerialNumber", "LensMake", "LensModel", "LensSerialNumber", "LensInfo",
                "UniqueCameraModel", "HostComputer", "OwnerName", "CameraOwnerName"}  # fmt: skip
-SOFTWARE_TAGS = {"Software", "CreatorTool", "ProcessingSoftware", "XMPToolkit", "Encoder",
-                 "HistorySoftwareAgent", "Producer", "Generator"}  # fmt: skip
+SOFTWARE_TAGS = {"Software", "SoftwareVersion", "CreatorTool", "ProcessingSoftware",
+                 "XMPToolkit", "Encoder", "HistorySoftwareAgent", "Producer",
+                 "Generator"}  # fmt: skip
 AUTHOR_TAGS = {"Artist", "Creator", "By-line", "Copyright", "CopyrightNotice", "Rights",
                "Credit", "Author", "Writer-Editor", "Source", "Contact"}  # fmt: skip
 LOCATION_WORDS = re.compile(r"GPS|Location|City|Country|Sub-?location|Province|State")
 TIME_WORDS = re.compile(r"Date|Time")
+LOCI = re.compile(r"Lat=(?P<lat>-?[\d.]+) Lon=(?P<lon>-?[\d.]+)")
 
 
 @dataclass
@@ -131,6 +140,8 @@ def is_metadata(group: str, tag: str) -> bool:
     """Whether a tag is embedded metadata (as opposed to file structure or the kept ICC profile)."""
     if group in STRUCTURAL_GROUPS or ICC_GROUP.match(group) or (group, tag) in KEPT_TAGS:
         return False
+    if QUICKTIME_GROUP.match(group):
+        return tag in QUICKTIME_METADATA_TAGS
     return tag not in STRUCTURAL_TAGS.get(group, set())
 
 
@@ -147,7 +158,7 @@ def categorize(group: str, tag: str) -> Category:
         or group in {"Canon", "Nikon", "Sony", "Apple", "Samsung"}
     ):
         return Category.DEVICE
-    if tag in SOFTWARE_TAGS:
+    if tag in SOFTWARE_TAGS or tag == "CompressorName":
         return Category.SOFTWARE
     if tag in AUTHOR_TAGS:
         return Category.AUTHOR
@@ -171,6 +182,8 @@ def build_report(tags: dict[str, Any], c2pa: C2PAInfo, kept: list[str] | None = 
         if not tag or not is_metadata(group, tag):
             continue
         value = _stringify(raw)
+        if not value or value.startswith(ZERO_DATE):
+            continue  # empty values and zeroed timestamps reveal nothing
         buckets.setdefault(categorize(group, tag), []).append(Field(group, tag, value))
         first.setdefault(tag, value)
         report.total += 1
@@ -233,5 +246,8 @@ def _location(first: dict[str, str]) -> str | None:
         return f"{lat}, {lon}"
     for tag in ("GPSCoordinates", "GPSPosition", "LocationInformation", "City"):
         if tag in first:
+            # QuickTime "loci" reads like "(none) Role=shooting Lat=41.00819 Lon=28.97839 ..."
+            if match := LOCI.search(first[tag]):
+                return f"{match['lat']}, {match['lon']}"
             return first[tag]
     return None
