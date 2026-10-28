@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: mypy
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install exiftool and ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg libimage-exiftool-perl
+      - name: Install c2patool
+        env:
+          C2PATOOL_VERSION: "0.27.22"
+          C2PATOOL_SHA256: 6f138ad53da1a62f1cd6ee71c60727efa27d13b811f4c0ea8c2a8528968b358b
+        run: |
+          curl -fsSL -o c2patool.tar.gz \
+            "https://github.com/contentauth/c2pa-rs/releases/download/c2patool-v${C2PATOOL_VERSION}/c2patool-v${C2PATOOL_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          echo "${C2PATOOL_SHA256}  c2patool.tar.gz" | sha256sum -c -
+          sudo tar -xzf c2patool.tar.gz -C /usr/local/bin --strip-components=1 c2patool/c2patool
+          c2patool --version
+      - run: pip install -e ".[dev]"
+      - run: npm ci && npm run build:css
+      - run: pytest --cov --cov-report=term-missing

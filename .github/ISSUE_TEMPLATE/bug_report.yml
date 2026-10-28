@@ -1,0 +1,55 @@
+name: Bug report
+description: Something is wrong, or metadata survived cleaning
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! **Please don't attach personal photos or videos.**
+        If a file is needed, reproduce with a synthetic one (`python scripts/make_fixtures.py`).
+        Security problems: use the private channel in SECURITY.md instead of this form.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you get instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Upload a .mov recorded with ...
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: File format
+      options: [JPEG, PNG, WebP, HEIC/HEIF, MP4, MOV, Not file-specific]
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Where does the file come from?
+      description: Camera or phone model, app or AI tool that created or edited it.
+  - type: dropdown
+    id: install
+    attributes:
+      label: How are you running Purefile?
+      options: [Docker image, docker compose, Local development, Other]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output of exiftool / c2patool on the cleaned file (optional)
+      render: shell
+      description: Remove anything private before pasting.
