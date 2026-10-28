@@ -1,0 +1,187 @@
+@import "tailwindcss" source(none);
+@source "../index.html";
+@source "../js";
+
+/* Dark mode follows a class on <html>, set by theme.js (system default + toggle). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Self-hosted variable fonts (SIL OFL 1.1). No requests leave this origin. */
+@font-face {
+  font-family: "Outfit";
+  src: url("../fonts/Outfit-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* Theme-dependent surfaces. */
+:root {
+  --page: #f7f8fa;
+  --card: #ffffff;
+  --line: rgb(26 46 81 / 0.1);
+  --ink: #1a2e51;
+  --muted: rgb(26 46 81 / 0.64);
+  --soft: rgb(26 46 81 / 0.05);
+  --ok-ink: #12784a;
+  --alert-ink: #b83232;
+  color-scheme: light;
+}
+.dark {
+  --page: #0f1726;
+  --card: #1e2f55;
+  --line: rgb(247 248 250 / 0.12);
+  --ink: #f7f8fa;
+  --muted: rgb(247 248 250 / 0.68);
+  --soft: rgb(247 248 250 / 0.06);
+  --ok-ink: #6fe7b0;
+  --alert-ink: #ff9a9a;
+  color-scheme: dark;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-navy: #1a2e51;
+  --color-mint: #47db98;
+  --color-mint-strong: #34c784;
+  --color-coral: #ff6b6b;
+  --radius-card: 16px;
+}
+@theme inline {
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-soft: var(--soft);
+  --color-ok-ink: var(--ok-ink);
+  --color-alert-ink: var(--alert-ink);
+}
+
+/* Reusable component classes (Tailwind v4 custom utilities). */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold
+    transition-colors outline-none focus-visible:ring-2 focus-visible:ring-mint focus-visible:ring-offset-2
+    focus-visible:ring-offset-page disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-mint text-navy hover:bg-mint-strong;
+}
+@utility btn-ghost {
+  @apply btn border border-line text-ink hover:bg-soft;
+}
+@utility icon-btn {
+  @apply inline-flex size-10 items-center justify-center rounded-xl border border-line text-ink transition-colors
+    outline-none hover:bg-soft focus-visible:ring-2 focus-visible:ring-mint;
+}
+@utility badge {
+  @apply inline-flex max-w-full items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium;
+}
+@utility badge-alert {
+  @apply badge border-coral/40 bg-coral/12 text-alert-ink;
+}
+@utility badge-note {
+  @apply badge border-line bg-soft text-ink;
+}
+@utility badge-ok {
+  @apply badge border-mint/40 bg-mint/15 text-ok-ink;
+}
+
+/* Drop zone highlight while dragging files over the page. */
+.is-dragging #dropzone {
+  border-color: var(--color-mint);
+  background-color: color-mix(in srgb, var(--color-mint) 8%, var(--card));
+}
+
+/* Upload progress */
+.progress-bar {
+  transition: width 0.2s ease-out;
+}
+.progress-bar.is-indeterminate {
+  width: 35% !important;
+  animation: indeterminate 1.1s ease-in-out infinite;
+}
+@keyframes indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(290%); }
+}
+
+/*
+ * "Peel" micro-animation, mirroring the logo: when a file is clean, the card's
+ * top-right corner folds over its diagonal and turns into the mint flap.
+ * The front face (card colour) rotates 180deg about the diagonal; the back face
+ * (mint) is pre-flipped about the other diagonal, so it lands facing the viewer
+ * in the lower-left half. The vacated upper-right half shows the page colour,
+ * like the cut-away corner of the logo.
+ */
+.peel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  perspective: 300px;
+  pointer-events: none;
+}
+.peel::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1px 0 0;
+  background: var(--page);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  opacity: 0;
+  transition: opacity 0.15s ease 0.25s;
+}
+.peel-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.3, 0.7, 0.2, 1.05);
+}
+.peel-front,
+.peel-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.peel-front {
+  background: var(--card);
+}
+.peel-back {
+  background: linear-gradient(225deg, var(--color-mint) 40%, var(--color-mint-strong));
+  border-bottom-left-radius: 10px;
+  transform: rotate3d(1, -1, 0, 180deg);
+}
+.is-peeled .peel::before {
+  opacity: 1;
+}
+.is-peeled .peel-inner {
+  transform: rotate3d(1, 1, 0, 180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .peel-inner,
+  .peel::before,
+  .progress-bar {
+    transition: none;
+  }
+  .progress-bar.is-indeterminate {
+    animation: none;
+  }
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .chevron {
+  transform: rotate(90deg);
+}

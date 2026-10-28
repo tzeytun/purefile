@@ -1,0 +1,77 @@
+{
+  "a11y.skip": "Yüklemeye geç",
+  "header.language": "Dil",
+  "header.theme": "Karanlık modu aç/kapat",
+
+  "hero.tagline": "Temiz dosyalar. Fazlası yok.",
+  "hero.subtitle": "Fotoğraf ve videolardaki gizli meta verileri (EXIF, IPTC, XMP ve C2PA İçerik Kimlik Bilgileri) tek bir pikseli yeniden kodlamadan kaldırın.",
+
+  "drop.title": "Fotoğraf veya videoları buraya bırakın",
+  "drop.or": "ya da",
+  "drop.browse": "dosya seçin",
+  "drop.formats": "JPEG · PNG · WebP · HEIC · MP4 · MOV",
+  "drop.limits": "Görseller en fazla {image} MB · videolar en fazla {video} MB",
+  "drop.privacy": "Dosyalar indirildikten hemen sonra, en geç {minutes} dakika içinde silinir.",
+
+  "actions.downloadAll": "Tümünü indir (ZIP)",
+  "actions.clearAll": "Tümünü temizle",
+  "actions.summary": "{count} dosya · {clean} temiz",
+
+  "status.waiting": "Sırada…",
+  "status.uploading": "Yükleniyor %{percent}",
+  "status.scanning": "Taranıyor…",
+  "status.clean": "Temiz ✓",
+  "status.failed": "Başarısız",
+  "status.downloaded": "İndirildi",
+
+  "card.download": "İndir",
+  "card.downloaded": "İndirildi",
+  "card.remove": "Kaldır",
+  "card.found": "Bulunan meta veriler ({count} alan)",
+  "card.nothingFound": "Meta veri bulunamadı. Bu dosya zaten temizdi.",
+  "card.after": "Temizlik sonrası: hiç meta veri kalmadı.",
+  "card.c2paRemoved": "C2PA manifesti kaldırıldı.",
+  "card.kept": "Korunanlar: {items}.",
+  "card.thumbnail": "{name} önizlemesi",
+
+  "kept.icc_profile": "ICC renk profili",
+  "kept.orientation": "yönlendirme",
+
+  "badge.c2pa": "C2PA · {value}",
+  "badge.c2paPlain": "C2PA manifesti",
+  "badge.ai": "Yapay zekâ üretim parametreleri",
+  "badge.location": "GPS konumu",
+  "badge.device": "Cihaz · {value}",
+  "badge.software": "Yazılım · {value}",
+  "badge.time": "Tarih · {value}",
+
+  "source.trainedAlgorithmicMedia": "Yapay zekâ ile üretilmiş",
+  "source.compositeWithTrainedAlgorithmicMedia": "Yapay zekâ ile düzenlenmiş kompozit",
+  "source.algorithmicMedia": "Algoritmik medya",
+  "source.compositeSynthetic": "Sentetik kompozit",
+  "source.algorithmicallyEnhanced": "Algoritmik olarak iyileştirilmiş",
+  "source.digitalCapture": "Kamera çekimi",
+  "source.other": "Kaynak türü · {value}",
+
+  "category.ai": "Yapay zekâ ve üretim",
+  "category.provenance": "İçerik Kimlik Bilgileri (C2PA)",
+  "category.location": "Konum",
+  "category.device": "Kamera ve cihaz",
+  "category.time": "Tarih ve saatler",
+  "category.software": "Yazılım",
+  "category.author": "Yazar ve haklar",
+  "category.other": "Diğer",
+
+  "error.unsupported_type": "Bu dosya türü desteklenmiyor.",
+  "error.too_large": "Bu dosya {limit} MB sınırından büyük.",
+  "error.empty": "Bu dosya boş.",
+  "error.clean_failed": "Bu dosya güvenli şekilde temizlenemedi, bu yüzden hiçbir şey döndürülmedi.",
+  "error.server_error": "Sunucuda bir sorun oluştu. Lütfen tekrar deneyin.",
+  "error.not_found": "Bu dosyanın süresi doldu. Lütfen tekrar yükleyin.",
+  "error.aborted": "Yükleme yarıda kesildi.",
+  "error.network": "Bağlantı koptu. Lütfen tekrar deneyin.",
+
+  "footer.disclaimer": "Purefile yalnızca dosya meta verilerini kaldırır. Piksellere gömülü görünmez filigranları etkilemez. Her platformun içerik politikalarına uymak sizin sorumluluğunuzdadır.",
+  "footer.privacy": "Analiz yok, takip yok, harici istek yok.",
+  "footer.github": "GitHub'da kaynak kod"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "purefile-web",
+  "private": true,
+  "description": "Build tooling for the Purefile frontend (Tailwind CSS). Nothing here ships as runtime JavaScript.",
+  "license": "MIT",
+  "scripts": {
+    "build:css": "tailwindcss -i web/css/input.css -o web/css/app.css --minify",
+    "watch:css": "tailwindcss -i web/css/input.css -o web/css/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.3",
+    "tailwindcss": "4.3.3"
+  }
+}

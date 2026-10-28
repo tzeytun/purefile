@@ -18,3 +18,7 @@ dist/
 # Environment
 .env
 .tools/
+
+# Frontend build output (run `npm run build:css`)
+node_modules/
+web/css/app.css

@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     tool_timeout_seconds: int = Field(
         600, ge=10, description="Timeout for a single exiftool/ffmpeg/c2patool invocation."
     )
+    max_concurrent_jobs: int = Field(
+        4, ge=1, description="Files processed in parallel; further uploads wait their turn."
+    )
+    web_dir: Path = Field(
+        default_factory=lambda: Path(__file__).resolve().parents[1] / "web",
+        description="Directory containing the static frontend.",
+    )
 
     exiftool_path: str = "exiftool"
     ffmpeg_path: str = "ffmpeg"

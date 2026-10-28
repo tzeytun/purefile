@@ -1,0 +1,77 @@
+{
+  "a11y.skip": "Skip to upload",
+  "header.language": "Language",
+  "header.theme": "Toggle dark mode",
+
+  "hero.tagline": "Clean files. Nothing extra.",
+  "hero.subtitle": "Remove hidden metadata (EXIF, IPTC, XMP and C2PA Content Credentials) from photos and videos without re-encoding a single pixel.",
+
+  "drop.title": "Drop photos or videos here",
+  "drop.or": "or",
+  "drop.browse": "choose files",
+  "drop.formats": "JPEG · PNG · WebP · HEIC · MP4 · MOV",
+  "drop.limits": "Images up to {image} MB · videos up to {video} MB",
+  "drop.privacy": "Files are deleted right after download, or after {minutes} minutes at the latest.",
+
+  "actions.downloadAll": "Download all (ZIP)",
+  "actions.clearAll": "Clear all",
+  "actions.summary": "{count, plural, one {# file} other {# files}} · {clean} clean",
+
+  "status.waiting": "Waiting…",
+  "status.uploading": "Uploading {percent}%",
+  "status.scanning": "Scanning…",
+  "status.clean": "Clean ✓",
+  "status.failed": "Failed",
+  "status.downloaded": "Downloaded",
+
+  "card.download": "Download",
+  "card.downloaded": "Downloaded",
+  "card.remove": "Remove",
+  "card.found": "Found metadata ({count, plural, one {# field} other {# fields}})",
+  "card.nothingFound": "No metadata found. This file was already clean.",
+  "card.after": "After cleaning: no metadata remains.",
+  "card.c2paRemoved": "C2PA manifest removed.",
+  "card.kept": "Kept: {items}.",
+  "card.thumbnail": "Preview of {name}",
+
+  "kept.icc_profile": "ICC color profile",
+  "kept.orientation": "orientation",
+
+  "badge.c2pa": "C2PA · {value}",
+  "badge.c2paPlain": "C2PA manifest",
+  "badge.ai": "AI generation parameters",
+  "badge.location": "GPS location",
+  "badge.device": "Device · {value}",
+  "badge.software": "Software · {value}",
+  "badge.time": "Date · {value}",
+
+  "source.trainedAlgorithmicMedia": "AI-generated",
+  "source.compositeWithTrainedAlgorithmicMedia": "AI-edited composite",
+  "source.algorithmicMedia": "Algorithmic media",
+  "source.compositeSynthetic": "Synthetic composite",
+  "source.algorithmicallyEnhanced": "Algorithmically enhanced",
+  "source.digitalCapture": "Camera capture",
+  "source.other": "Source type · {value}",
+
+  "category.ai": "AI & generation",
+  "category.provenance": "Content Credentials (C2PA)",
+  "category.location": "Location",
+  "category.device": "Camera & device",
+  "category.time": "Dates & times",
+  "category.software": "Software",
+  "category.author": "Author & rights",
+  "category.other": "Other",
+
+  "error.unsupported_type": "This file type is not supported.",
+  "error.too_large": "This file is larger than {limit} MB.",
+  "error.empty": "This file is empty.",
+  "error.clean_failed": "This file could not be cleaned safely, so nothing was returned.",
+  "error.server_error": "Something went wrong on the server. Please try again.",
+  "error.not_found": "This file has expired. Please upload it again.",
+  "error.aborted": "The upload was interrupted.",
+  "error.network": "Connection lost. Please try again.",
+
+  "footer.disclaimer": "Purefile removes file metadata only. It does not affect invisible watermarks embedded in pixels. You are responsible for following each platform's content policies.",
+  "footer.privacy": "No analytics, no tracking, no external requests.",
+  "footer.github": "Source on GitHub"
+}

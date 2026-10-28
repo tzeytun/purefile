@@ -25,5 +25,6 @@ class Changes:
             self.kept.append(what)
 
 
-KEPT_ICC = "ICC color profile"
-KEPT_ORIENTATION = "Orientation"
+# Codes for data that is kept on purpose (localized by the UI).
+KEPT_ICC = "icc_profile"
+KEPT_ORIENTATION = "orientation"
