@@ -7,7 +7,7 @@
 #   test    - runtime + dev dependencies, runs ruff and pytest
 
 # ---------------------------------------------------------------------------
-FROM node:22-alpine AS css
+FROM node:26-alpine AS css
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
