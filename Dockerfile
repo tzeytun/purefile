@@ -15,7 +15,7 @@ COPY web ./web
 RUN npm run build:css
 
 # ---------------------------------------------------------------------------
-FROM python:3.12-slim-trixie AS runtime
+FROM python:3.15-slim-trixie AS runtime
 
 # c2patool is only published as an x86_64 Linux binary; the image targets linux/amd64.
 ARG C2PATOOL_VERSION=0.27.22
